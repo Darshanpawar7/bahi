@@ -1,5 +1,4 @@
 import { useSyncExternalStore } from 'react';
-import { parseStored } from '../domain/backup';
 import { emptyData } from '../domain/factory';
 import { sampleData } from '../domain/sample';
 import type { AppData, Business, Client, Invoice, Payment } from '../domain/types';
@@ -26,7 +25,14 @@ export class Store {
 
   async init(): Promise<void> {
     try {
-      this.data = parseStored(await this.repository.load()) ?? emptyData();
+      const stored = await this.repository.load();
+      // A first visit has nothing stored, so the validator (and its library) is only fetched when needed.
+      if (stored === undefined || stored === null) {
+        this.data = emptyData();
+      } else {
+        const { parseStored } = await import('../domain/backup');
+        this.data = parseStored(stored) ?? emptyData();
+      }
     } catch {
       // Storage is unavailable or unreadable: start empty rather than refuse to open.
       this.data = emptyData();

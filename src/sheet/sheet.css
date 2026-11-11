@@ -310,6 +310,9 @@
 }
 
 /* ---- the rubber stamp ---- */
+.sheet__defs {
+  position: absolute;
+}
 .sheet__stamp {
   position: absolute;
   /* In the quiet middle of the header, between the business name and the invoice number. */

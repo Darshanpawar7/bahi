@@ -931,6 +931,10 @@
 }
 
 /* ---------------------------------------------------------------- welcome */
+/* Returning visitors never see the pre-rendered welcome screen flash before their dashboard. */
+.returning #root > .welcome {
+  visibility: hidden;
+}
 .welcome {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 0.95fr);

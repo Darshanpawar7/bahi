@@ -1,4 +1,4 @@
-import { useMemo, type CSSProperties } from 'react';
+import { useLayoutEffect, useMemo, useRef } from 'react';
 import { encode } from 'uqr';
 import type { DocumentParty, InvoiceDocument } from '../domain/document';
 import './sheet.css';
@@ -56,12 +56,17 @@ function Party({ heading, party }: { heading: string; party: DocumentParty }) {
  * was decided by the domain layer. The same component is what the browser prints to PDF.
  */
 export function InvoiceSheet({ doc }: { doc: InvoiceDocument }) {
-  const style = { '--accent': doc.accent } as CSSProperties;
+  // The accent is set through the CSSOM rather than a style attribute, which the strict CSP would block
+  // in pre-rendered HTML.
+  const sheet = useRef<HTMLElement>(null);
+  useLayoutEffect(() => {
+    sheet.current?.style.setProperty('--accent', doc.accent);
+  }, [doc.accent]);
   const isContact = (label: string) => label === 'Email' || label === 'Phone';
   const contact = doc.supplier.facts.filter(item => isContact(item.label)).map(item => item.value);
   const identity = doc.supplier.facts.filter(item => !isContact(item.label));
   return (
-    <article className="sheet" style={style} aria-label={`${doc.title} ${doc.number}`}>
+    <article className="sheet" ref={sheet} aria-label={`${doc.title} ${doc.number}`}>
       <header className="sheet__top">
         <div className="sheet__brand">
           {doc.logo && <img src={doc.logo} alt="" className="sheet__logo" />}
@@ -244,7 +249,7 @@ export function InvoiceSheet({ doc }: { doc: InvoiceDocument }) {
 
       {doc.stamp && (
         <div className={`sheet__stamp sheet__stamp--${doc.stamp.toLowerCase()}`} aria-hidden="true">
-          <svg width="0" height="0" style={{ position: 'absolute' }}>
+          <svg className="sheet__defs" width="0" height="0">
             <filter id="stamp-ink" x="-10%" y="-20%" width="120%" height="140%">
               <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="7" result="noise" />
               <feColorMatrix

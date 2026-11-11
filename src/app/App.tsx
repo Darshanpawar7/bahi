@@ -1,9 +1,4 @@
-import { useEffect } from 'react';
-import { Clients } from '../features/Clients';
-import { Dashboard } from '../features/Dashboard';
-import { Editor } from '../features/Editor';
-import { Invoices } from '../features/Invoices';
-import { Settings } from '../features/Settings';
+import { lazy, Suspense, useEffect } from 'react';
 import { Welcome } from '../features/Welcome';
 import { Icon, Mark, Toasts, type IconName } from '../ui/kit';
 import { createInvoice } from './commands';
@@ -26,6 +21,13 @@ const TITLES: Record<Route['name'], string> = {
   settings: 'Settings',
 };
 
+// Each screen is its own chunk: a first visit downloads only the welcome screen.
+const Dashboard = lazy(() => import('../features/Dashboard').then(module => ({ default: module.Dashboard })));
+const Invoices = lazy(() => import('../features/Invoices').then(module => ({ default: module.Invoices })));
+const Editor = lazy(() => import('../features/Editor').then(module => ({ default: module.Editor })));
+const Clients = lazy(() => import('../features/Clients').then(module => ({ default: module.Clients })));
+const Settings = lazy(() => import('../features/Settings').then(module => ({ default: module.Settings })));
+
 function Screen({ route }: { route: Route }) {
   switch (route.name) {
     case 'invoices':
@@ -46,6 +48,16 @@ export function App() {
   const route = useRoute();
   const theme = useTheme();
   const dark = resolveTheme(theme) === 'dark';
+
+  const hasWorkspace = data.business !== null;
+  useEffect(() => {
+    try {
+      localStorage.setItem('bahi-returning', hasWorkspace ? '1' : '0');
+    } catch {
+      // Without storage the welcome screen may flash briefly for returning visitors; nothing breaks.
+    }
+    document.documentElement.classList.toggle('returning', hasWorkspace);
+  }, [hasWorkspace]);
 
   useEffect(() => {
     document.title = data.business ? `${TITLES[route.name]} · Bahi` : 'Bahi · GST-ready invoices, on your device';
@@ -112,7 +124,9 @@ export function App() {
             </button>
           </div>
         )}
-        <Screen route={route} />
+        <Suspense fallback={<div className="page" aria-busy="true" />}>
+          <Screen route={route} />
+        </Suspense>
       </main>
 
       <nav className="tabbar" aria-label="Main">
