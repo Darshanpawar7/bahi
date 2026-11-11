@@ -52,8 +52,8 @@
   --muted: #a1988a;
   --hair: #2f2a25;
   --hair-strong: #443d35;
-  --red: #e0523c;
-  --red-deep: #c2412d;
+  --red: #e8604a;
+  --red-deep: #d24e39;
   --red-wash: #3a1c16;
   --on-red: #1a0e0b;
   --saffron: #ebb04b;
@@ -270,6 +270,7 @@ button {
 /* ---------------------------------------------------------------- fields */
 .field {
   display: grid;
+  align-content: start;
   gap: 6px;
   min-width: 0;
 }

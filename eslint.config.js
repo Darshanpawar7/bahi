@@ -18,5 +18,10 @@ export default tseslint.config(
       eqeqeq: 'error',
     },
   },
+  {
+    // Command-line scripts report what they did.
+    files: ['scripts/**', 'e2e/**'],
+    rules: { 'no-console': 'off' },
+  },
   prettier,
 );

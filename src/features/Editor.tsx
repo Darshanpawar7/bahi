@@ -232,7 +232,7 @@ export function Editor({ id }: { id: string }) {
           )}
           {status !== 'void' && (
             <button type="button" className="btn" onClick={() => setPaying(true)}>
-              <Icon name="paid" size={16} /> Record payment
+              <Icon name="paid" size={16} /> {status === 'paid' ? 'Payments' : 'Record payment'}
             </button>
           )}
           <button type="button" className="btn btn--primary" onClick={() => printSheet(doc.fileName)}>

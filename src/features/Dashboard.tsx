@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, type RefObject } from 'react';
 import { createInvoice } from '../app/commands';
 import { hrefFor } from '../app/router';
 import { useData } from '../app/store';
@@ -61,18 +61,51 @@ function niceCeiling(value: number): number {
   return step * power;
 }
 
-const CHART = { width: 720, height: 250, left: 56, right: 8, top: 14, bottom: 30, bar: 15, gap: 4 };
+const NARROW = 520;
 
+/** The width of an element in CSS pixels, kept up to date as the layout changes. */
+function useWidth<T extends HTMLElement>(): [RefObject<T | null>, number] {
+  const ref = useRef<T>(null);
+  const [width, setWidth] = useState(720);
+  useLayoutEffect(() => {
+    const element = ref.current;
+    if (!element) return;
+    const observer = new ResizeObserver(entries => {
+      const next = entries[0]?.contentRect.width;
+      if (next) setWidth(Math.round(next));
+    });
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, []);
+  return [ref, width];
+}
+
+/**
+ * Invoiced and received, month by month. Drawn at the real pixel width of its box, so the labels stay
+ * 11px on a phone and on a wide screen alike.
+ */
 function Chart({ months, label }: { months: MonthFigures[]; label: string }) {
+  const [box, width] = useWidth<HTMLElement>();
   const [active, setActive] = useState<number | null>(null);
+  const narrow = width < NARROW;
+  const size = {
+    width: Math.max(280, width),
+    height: narrow ? 200 : 260,
+    left: narrow ? 40 : 52,
+    right: 4,
+    top: 12,
+    bottom: 28,
+  };
   const peak = niceCeiling(Math.max(1, ...months.flatMap(month => [month.invoiced, month.received])));
-  const plotHeight = CHART.height - CHART.top - CHART.bottom;
-  const slot = (CHART.width - CHART.left - CHART.right) / months.length;
-  const y = (value: number) => CHART.top + plotHeight - (value / peak) * plotHeight;
+  const plotHeight = size.height - size.top - size.bottom;
+  const slot = (size.width - size.left - size.right) / months.length;
+  const bar = Math.max(4, Math.min(16, (slot - 8) / 2.3));
+  const gap = Math.max(2, Math.min(4, bar / 4));
+  const y = (value: number) => size.top + plotHeight - (value / peak) * plotHeight;
   const focus = active === null ? null : months[active];
 
   return (
-    <figure className="chart">
+    <figure className="chart" ref={box}>
       <figcaption>
         <span>
           <i className="key key--invoiced" /> Invoiced
@@ -86,23 +119,29 @@ function Chart({ months, label }: { months: MonthFigures[]; label: string }) {
             : ''}
         </span>
       </figcaption>
-      <svg viewBox={`0 0 ${CHART.width} ${CHART.height}`} role="group" aria-label={label}>
+      <svg
+        width={size.width}
+        height={size.height}
+        viewBox={`0 0 ${size.width} ${size.height}`}
+        role="group"
+        aria-label={label}
+      >
         {[0, 0.5, 1].map(fraction => (
           <g key={fraction}>
             <line
               className="chart__grid"
-              x1={CHART.left}
-              x2={CHART.width - CHART.right}
+              x1={size.left}
+              x2={size.width - size.right}
               y1={y(peak * fraction)}
               y2={y(peak * fraction)}
             />
-            <text className="chart__tick" x={CHART.left - 10} y={y(peak * fraction) + 4} textAnchor="end">
+            <text className="chart__tick" x={size.left - 8} y={y(peak * fraction) + 4} textAnchor="end">
               {formatCompactRupees(peak * fraction)}
             </text>
           </g>
         ))}
         {months.map((month, index) => {
-          const x = CHART.left + slot * index + (slot - CHART.bar * 2 - CHART.gap) / 2;
+          const x = size.left + slot * index + (slot - bar * 2 - gap) / 2;
           return (
             <g
               key={month.key}
@@ -117,34 +156,34 @@ function Chart({ months, label }: { months: MonthFigures[]; label: string }) {
             >
               <rect
                 className="chart__hit"
-                x={CHART.left + slot * index}
-                y={CHART.top}
+                x={size.left + slot * index}
+                y={size.top}
                 width={slot}
-                height={plotHeight + CHART.bottom}
+                height={plotHeight + size.bottom}
               />
               <rect
                 className="chart__bar chart__bar--invoiced"
                 x={x}
                 y={y(month.invoiced)}
-                width={CHART.bar}
+                width={bar}
                 height={Math.max(0, y(0) - y(month.invoiced))}
                 rx="2"
               />
               <rect
                 className="chart__bar chart__bar--received"
-                x={x + CHART.bar + CHART.gap}
+                x={x + bar + gap}
                 y={y(month.received)}
-                width={CHART.bar}
+                width={bar}
                 height={Math.max(0, y(0) - y(month.received))}
                 rx="2"
               />
               <text
                 className="chart__tick"
-                x={CHART.left + slot * index + slot / 2}
-                y={CHART.height - 8}
+                x={size.left + slot * index + slot / 2}
+                y={size.height - 8}
                 textAnchor="middle"
               >
-                {month.label}
+                {narrow ? month.label.charAt(0) : month.label}
               </text>
             </g>
           );

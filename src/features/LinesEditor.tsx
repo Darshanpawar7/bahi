@@ -19,10 +19,14 @@ interface LinesEditorProps {
 const PERCENT = 100;
 const MAX_RATE_PERCENT = 100;
 
-/** The line items: add, edit, reorder with the arrow buttons (or the keyboard), remove. */
+/**
+ * The line items. Each line is a small card: what it is, then the numbers, each with a visible label.
+ * Lines move up and down with buttons, so reordering works from the keyboard as well as by pointer.
+ */
 export function LinesEditor({ lines, totals, business, currency, taxed, onChange }: LinesEditorProps) {
   const listId = useId();
   const container = useRef<HTMLDivElement>(null);
+  const showSac = business.registration !== 'unregistered';
 
   const patch = (id: string, change: Partial<LineItem>) =>
     onChange(lines.map(line => (line.id === id ? { ...line, ...change } : line)));
@@ -61,55 +65,25 @@ export function LinesEditor({ lines, totals, business, currency, taxed, onChange
         ))}
       </datalist>
 
-      <div className="lines__head" aria-hidden="true">
-        <span>Description</span>
-        <span className="num">Qty</span>
-        <span className="num">Rate</span>
-        {taxed && <span className="num">GST %</span>}
-        <span className="num">Amount</span>
-        <span />
-      </div>
-
       {lines.map((line, index) => {
         const n = index + 1;
         const computed = totals[index];
         return (
           <fieldset className="line" key={line.id}>
             <legend className="visually-hidden">Line {n}</legend>
-            <div className="line__main">
+            <div className="line__top">
+              <span className="line__no" aria-hidden="true">
+                {String(n).padStart(2, '0')}
+              </span>
               <input
-                className="input"
+                className="input line__desc"
                 data-line-description
-                aria-label={`Line ${n} description`}
+                aria-label={`Description (line ${n})`}
                 placeholder="What you did or sold"
                 value={line.description}
                 maxLength={300}
                 onChange={event => patch(line.id, { description: event.target.value })}
               />
-              <NumberInput
-                aria-label={`Line ${n} quantity`}
-                value={line.quantity}
-                onChange={quantity => patch(line.id, { quantity })}
-              />
-              <MoneyInput
-                aria-label={`Line ${n} rate`}
-                placeholder="0"
-                value={line.ratePaise}
-                onChange={ratePaise => patch(line.id, { ratePaise })}
-              />
-              {taxed && (
-                <NumberInput
-                  aria-label={`Line ${n} GST percent`}
-                  list={`${listId}-rates`}
-                  max={MAX_RATE_PERCENT}
-                  decimals={2}
-                  value={line.gstRateBp / PERCENT}
-                  onChange={percent => patch(line.id, { gstRateBp: Math.round(percent * PERCENT) })}
-                />
-              )}
-              <output className="line__amount amount" aria-label={`Line ${n} amount`}>
-                {formatAmount(computed?.total ?? 0, currency)}
-              </output>
               <div className="line__tools">
                 <button
                   type="button"
@@ -140,38 +114,79 @@ export function LinesEditor({ lines, totals, business, currency, taxed, onChange
                 </button>
               </div>
             </div>
-            <div className="line__more">
+
+            <div className="line__sub">
               <input
-                className="input"
-                aria-label={`Line ${n} detail`}
+                className="input line__detail"
+                aria-label={`Detail (line ${n})`}
                 placeholder="A second line of detail (optional)"
                 value={line.detail}
                 maxLength={600}
                 onChange={event => patch(line.id, { detail: event.target.value })}
               />
-              {business.registration !== 'unregistered' && (
+              {showSac && (
+                <label className="mini mini--sac">
+                  <span>SAC</span>
+                  <input
+                    className="input"
+                    aria-label={`SAC (line ${n})`}
+                    list={`${listId}-sac`}
+                    value={line.sac}
+                    inputMode="numeric"
+                    maxLength={8}
+                    placeholder="998314"
+                    onChange={event => patch(line.id, { sac: event.target.value.replace(/\D/g, '') })}
+                  />
+                </label>
+              )}
+            </div>
+
+            <div className="line__nums">
+              <label className="mini mini--qty">
+                <span>Qty</span>
+                <NumberInput
+                  aria-label={`Qty (line ${n})`}
+                  value={line.quantity}
+                  onChange={quantity => patch(line.id, { quantity })}
+                />
+              </label>
+              <label className="mini mini--unit">
+                <span>Unit</span>
                 <input
                   className="input"
-                  aria-label={`Line ${n} HSN or SAC code`}
-                  placeholder="SAC"
-                  list={`${listId}-sac`}
-                  value={line.sac}
-                  inputMode="numeric"
-                  maxLength={8}
-                  onChange={event => patch(line.id, { sac: event.target.value.replace(/\D/g, '') })}
+                  aria-label={`Unit (line ${n})`}
+                  placeholder="hours"
+                  value={line.unit}
+                  maxLength={20}
+                  onChange={event => patch(line.id, { unit: event.target.value })}
                 />
+              </label>
+              <label className="mini mini--rate">
+                <span>Rate</span>
+                <MoneyInput
+                  aria-label={`Rate (line ${n})`}
+                  placeholder="0"
+                  value={line.ratePaise}
+                  onChange={ratePaise => patch(line.id, { ratePaise })}
+                />
+              </label>
+              {taxed && (
+                <label className="mini mini--small">
+                  <span>GST %</span>
+                  <NumberInput
+                    aria-label={`GST % (line ${n})`}
+                    list={`${listId}-rates`}
+                    max={MAX_RATE_PERCENT}
+                    decimals={2}
+                    value={line.gstRateBp / PERCENT}
+                    onChange={percent => patch(line.id, { gstRateBp: Math.round(percent * PERCENT) })}
+                  />
+                </label>
               )}
-              <input
-                className="input"
-                aria-label={`Line ${n} unit`}
-                placeholder="Unit"
-                value={line.unit}
-                maxLength={20}
-                onChange={event => patch(line.id, { unit: event.target.value })}
-              />
-              <span className="line__discount">
+              <label className="mini mini--small">
+                <span>Disc. %</span>
                 <NumberInput
-                  aria-label={`Line ${n} discount percent`}
+                  aria-label={`Disc. % (line ${n})`}
                   placeholder="0"
                   blankZero
                   max={100}
@@ -179,8 +194,13 @@ export function LinesEditor({ lines, totals, business, currency, taxed, onChange
                   value={line.discount?.kind === 'percent' ? line.discount.value : 0}
                   onChange={value => patch(line.id, { discount: value > 0 ? { kind: 'percent', value } : null })}
                 />
-                <span aria-hidden="true">% off</span>
-              </span>
+              </label>
+              <div className="line__amount">
+                <span aria-hidden="true">Amount</span>
+                <output className="amount" aria-label={`Amount (line ${n})`}>
+                  {formatAmount(computed?.total ?? 0, currency)}
+                </output>
+              </div>
             </div>
           </fieldset>
         );

@@ -28,10 +28,12 @@ function contentSecurityPolicy(): Plugin {
 }
 
 // GitHub Pages serves this app from /bahi/. Override with BASE_PATH for any other host.
-export default defineConfig(({ command }) => ({
-  base: process.env.BASE_PATH ?? (command === 'build' ? '/bahi/' : '/'),
+export default defineConfig(({ command, isPreview }) => ({
+  // `vite preview` must serve the build under the same sub-path it was built for.
+  base: process.env.BASE_PATH ?? (command === 'build' || isPreview ? '/bahi/' : '/'),
   plugins: [react(), contentSecurityPolicy()],
-  build: { target: 'es2022', sourcemap: false },
+  // Nothing is inlined as a data: URL, so the strict font-src and img-src rules hold.
+  build: { target: 'es2022', sourcemap: false, assetsInlineLimit: 0 },
   test: {
     include: ['src/**/*.test.ts'],
     environment: 'node',

@@ -5,7 +5,7 @@
   --accent: #b4321f;
   --s-ink: #1c1a17;
   --s-soft: #5d574e;
-  --s-faint: #8a8377;
+  --s-faint: #6f685e; /* 5.3:1 on the sheet: small labels still pass WCAG AA */
   --s-line: #e2dbcf;
   --s-wash: #f6f1e8;
 
@@ -106,6 +106,10 @@
   display: grid;
   grid-template-columns: 1.35fr 1fr 1fr;
   gap: 28px;
+}
+.sheet__contact {
+  margin-top: 4px !important;
+  font-size: 11px;
 }
 .sheet__facts {
   display: grid;
@@ -308,12 +312,13 @@
 /* ---- the rubber stamp ---- */
 .sheet__stamp {
   position: absolute;
-  top: 132px;
-  right: 76px;
+  /* In the quiet middle of the header, between the business name and the invoice number. */
+  top: 54px;
+  left: 41%;
   padding: 5px;
   border: 3px solid currentColor;
   border-radius: 9px;
-  transform: rotate(-11deg);
+  transform: rotate(-9deg);
   filter: url(#stamp-ink);
   opacity: 0.88;
   pointer-events: none;
@@ -343,7 +348,7 @@
 @keyframes stamp-land {
   from {
     opacity: 0;
-    transform: rotate(-11deg) scale(1.7);
+    transform: rotate(-9deg) scale(1.7);
   }
 }
 @media (prefers-reduced-motion: reduce) {

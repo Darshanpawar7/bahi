@@ -57,6 +57,9 @@ function Party({ heading, party }: { heading: string; party: DocumentParty }) {
  */
 export function InvoiceSheet({ doc }: { doc: InvoiceDocument }) {
   const style = { '--accent': doc.accent } as CSSProperties;
+  const isContact = (label: string) => label === 'Email' || label === 'Phone';
+  const contact = doc.supplier.facts.filter(item => isContact(item.label)).map(item => item.value);
+  const identity = doc.supplier.facts.filter(item => !isContact(item.label));
   return (
     <article className="sheet" style={style} aria-label={`${doc.title} ${doc.number}`}>
       <header className="sheet__top">
@@ -69,6 +72,7 @@ export function InvoiceSheet({ doc }: { doc: InvoiceDocument }) {
                 {line}
               </p>
             ))}
+            {contact.length > 0 && <p className="sheet__quiet sheet__contact">{contact.join('   ·   ')}</p>}
           </div>
         </div>
         <div className="sheet__title">
@@ -80,15 +84,19 @@ export function InvoiceSheet({ doc }: { doc: InvoiceDocument }) {
       <section className="sheet__meta">
         <Party heading="Billed to" party={doc.recipient} />
         <div>
-          <h3>From</h3>
-          <dl className="sheet__facts sheet__facts--open">
-            {doc.supplier.facts.map(item => (
-              <div key={item.label}>
-                <dt>{item.label}</dt>
-                <dd>{item.value}</dd>
-              </div>
-            ))}
-          </dl>
+          {identity.length > 0 && (
+            <>
+              <h3>From</h3>
+              <dl className="sheet__facts sheet__facts--open">
+                {identity.map(item => (
+                  <div key={item.label}>
+                    <dt>{item.label}</dt>
+                    <dd>{item.value}</dd>
+                  </div>
+                ))}
+              </dl>
+            </>
+          )}
         </div>
         <div>
           <h3>Details</h3>
