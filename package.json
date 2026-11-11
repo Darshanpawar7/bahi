@@ -1,0 +1,56 @@
+{
+  "name": "bahi",
+  "version": "1.0.0",
+  "private": true,
+  "description": "GST-ready invoices for India's independents. Free, private, entirely on your device.",
+  "license": "MIT",
+  "author": "Darshan P Pawar <darshanpawarworks@gmail.com> (https://darshanpawar7.github.io)",
+  "homepage": "https://darshanpawar7.github.io/bahi/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Darshanpawar7/bahi.git"
+  },
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "vite --port 4101 --strictPort",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview --port 4201 --strictPort",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint . --max-warnings 0 && prettier --check .",
+    "format": "prettier --write .",
+    "test": "vitest run --coverage",
+    "test:watch": "vitest",
+    "e2e": "playwright test",
+    "screenshots": "node scripts/screenshots.mjs"
+  },
+  "dependencies": {
+    "@fontsource-variable/fraunces": "^5.3.0",
+    "@fontsource-variable/hanken-grotesk": "^5.3.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "uqr": "^0.1.3",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
+    "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.65.0",
+    "@types/node": "^24.19.2",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.3.0",
+    "@vitest/coverage-v8": "^5.1.0",
+    "eslint": "^10.14.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "globals": "^17.14.0",
+    "prettier": "^3.9.10",
+    "typescript": "~6.0.3",
+    "typescript-eslint": "^8.72.2",
+    "vite": "^8.3.8",
+    "vitest": "^5.1.0"
+  }
+}
