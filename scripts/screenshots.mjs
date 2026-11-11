@@ -7,6 +7,7 @@
 import { chromium } from '@playwright/test';
 import { mkdir } from 'node:fs/promises';
 import path from 'node:path';
+import { pathToFileURL } from 'node:url';
 
 const URL = process.env.BAHI_URL ?? 'http://localhost:4201/bahi/';
 const OUT = process.env.SHOTS_DIR ?? 'docs/screenshots';
@@ -116,6 +117,28 @@ await mkdir(OUT, { recursive: true });
   await shot(page, 'tablet-dashboard');
   await go(page, `#/invoices/${INVOICE_TWO_LINES}`, page.getByRole('button', { name: 'Download PDF' }));
   await shot(page, 'tablet-editor');
+  await context.close();
+}
+
+// ---- the invoice itself, sharp, as it prints
+{
+  const { context, page } = await session(browser, { width: 1440, height: 900 }, 2, 'light');
+  await loadSample(page);
+  await go(page, `#/invoices/${INVOICE_PAID}`, page.getByRole('button', { name: 'Download PDF' }));
+  await page.emulateMedia({ media: 'print' });
+  await page.locator('.print-root .sheet').screenshot({ path: path.join(OUT, 'sheet.png') });
+  console.log('wrote', path.join(OUT, 'sheet.png'));
+  await context.close();
+}
+
+// ---- the README banner and GitHub social preview, from docs/brand/banner.html
+{
+  const context = await browser.newContext({ viewport: { width: 1280, height: 640 } });
+  const page = await context.newPage();
+  await page.goto(pathToFileURL(path.resolve('docs/brand/banner.html')).href, { waitUntil: 'load' });
+  await page.evaluate(() => document.fonts.ready);
+  await page.screenshot({ path: 'docs/banner.png' });
+  console.log('wrote docs/banner.png');
   await context.close();
 }
 

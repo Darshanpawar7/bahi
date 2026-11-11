@@ -1,33 +1,116 @@
 <!doctype html>
 <html lang="en">
-<head>
-<meta charset="utf-8">
-<title>Bahi banner</title>
-<style>
-  @font-face { font-family: 'Fraunces'; src: url('../../node_modules/@fontsource-variable/fraunces/files/fraunces-latin-opsz-normal.woff2') format('woff2'); font-weight: 100 900; }
-  @font-face { font-family: 'Hanken'; src: url('../../node_modules/@fontsource-variable/hanken-grotesk/files/hanken-grotesk-latin-wght-normal.woff2') format('woff2'); font-weight: 100 900; }
-  html, body { margin: 0; }
-  .board { position: relative; width: 1280px; height: 640px; overflow: hidden; background: #FBF7F0; color: #1C1A17; font-family: 'Hanken', sans-serif; }
-  .board::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(to bottom, transparent 0 43px, #EFE7DA 43px 44px); opacity: .7; }
-  .copy { position: absolute; left: 84px; top: 112px; width: 560px; }
-  .mark { display: flex; align-items: center; gap: 18px; font-family: 'Fraunces', serif; font-weight: 600; font-size: 64px; letter-spacing: -0.03em; line-height: 1; }
-  .mark img { width: 64px; height: 64px; }
-  h1 { margin: 40px 0 0; font-family: 'Fraunces', serif; font-weight: 520; font-size: 54px; line-height: 1.02; letter-spacing: -0.035em; }
-  .stitch { margin: 36px 0 26px; border: 0; border-top: 3px dashed #E3A12F; width: 420px; }
-  p { margin: 0; font-size: 21px; line-height: 1.45; color: #47423A; }
-  .frame { position: absolute; left: 700px; top: 70px; width: 600px; height: 640px; transform: rotate(3deg); transform-origin: top left; box-shadow: 0 2px 3px rgba(28,26,23,.06), 0 24px 60px -20px rgba(28,26,23,.35); border-radius: 4px; overflow: hidden; background: #fff; }
-  .frame img { position: absolute; left: -12px; top: -14px; width: 700px; }
-</style>
-</head>
-<body>
-  <div class="board">
-    <div class="copy">
-      <div class="mark"><img src="logo.svg" alt=""> Bahi</div>
-      <h1>GST invoices that add themselves up.</h1>
-      <hr class="stitch">
-      <p>Free, private invoicing for India’s independents. CGST, SGST and IGST worked out for you, a UPI code on every bill, and nothing ever leaves your device.</p>
+  <head>
+    <meta charset="utf-8" />
+    <title>Bahi banner</title>
+    <style>
+      @font-face {
+        font-family: 'Fraunces';
+        src: url('../../node_modules/@fontsource-variable/fraunces/files/fraunces-latin-opsz-normal.woff2')
+          format('woff2');
+        font-weight: 100 900;
+      }
+      @font-face {
+        font-family: 'Hanken';
+        src: url('../../node_modules/@fontsource-variable/hanken-grotesk/files/hanken-grotesk-latin-wght-normal.woff2')
+          format('woff2');
+        font-weight: 100 900;
+      }
+      html,
+      body {
+        margin: 0;
+      }
+      .board {
+        position: relative;
+        width: 1280px;
+        height: 640px;
+        overflow: hidden;
+        background: #fbf7f0;
+        color: #1c1a17;
+        font-family: 'Hanken', sans-serif;
+      }
+      .board::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: repeating-linear-gradient(to bottom, transparent 0 43px, #efe7da 43px 44px);
+        opacity: 0.7;
+      }
+      .copy {
+        position: absolute;
+        left: 84px;
+        top: 112px;
+        width: 560px;
+      }
+      .mark {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        font-family: 'Fraunces', serif;
+        font-weight: 600;
+        font-size: 64px;
+        letter-spacing: -0.03em;
+        line-height: 1;
+      }
+      .mark img {
+        width: 64px;
+        height: 64px;
+      }
+      h1 {
+        margin: 40px 0 0;
+        font-family: 'Fraunces', serif;
+        font-weight: 520;
+        font-size: 54px;
+        line-height: 1.02;
+        letter-spacing: -0.035em;
+      }
+      .stitch {
+        margin: 36px 0 26px;
+        border: 0;
+        border-top: 3px dashed #e3a12f;
+        width: 420px;
+      }
+      p {
+        margin: 0;
+        font-size: 21px;
+        line-height: 1.45;
+        color: #47423a;
+      }
+      .frame {
+        position: absolute;
+        left: 700px;
+        top: 70px;
+        width: 600px;
+        height: 640px;
+        transform: rotate(3deg);
+        transform-origin: top left;
+        box-shadow:
+          0 2px 3px rgba(28, 26, 23, 0.06),
+          0 24px 60px -20px rgba(28, 26, 23, 0.35);
+        border-radius: 4px;
+        overflow: hidden;
+        background: #fff;
+      }
+      .frame img {
+        position: absolute;
+        left: -12px;
+        top: -14px;
+        width: 700px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="board">
+      <div class="copy">
+        <div class="mark"><img src="logo.svg" alt="" /> Bahi</div>
+        <h1>GST invoices that add themselves up.</h1>
+        <hr class="stitch" />
+        <p>
+          Free, private invoicing for India’s independents. CGST, SGST and IGST worked out for you, a UPI code on every
+          bill, and nothing ever leaves your device.
+        </p>
+      </div>
+      <div class="frame"><img src="../screenshots/sheet.png" alt="" /></div>
     </div>
-    <div class="frame"><img src="../screenshots/sheet.png" alt=""></div>
-  </div>
-</body>
+  </body>
 </html>
