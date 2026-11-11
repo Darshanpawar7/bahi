@@ -1,0 +1,534 @@
+/* Tokens and base styles. The identity is a red bahi-khata ledger: cream paper, dark ink, ledger red,
+   and a thread of saffron used only for the stitch and for focus. */
+
+:root {
+  --paper: #fbf7f0;
+  --surface: #ffffff;
+  --sunken: #f4eee3;
+  --ink: #1c1a17;
+  --ink-2: #47423a;
+  --muted: #6b645a;
+  --hair: #e7dfd2;
+  --hair-strong: #d2c8b6;
+  --red: #b4321f;
+  --red-deep: #8f2516;
+  --red-wash: #f8e6e1;
+  --on-red: #fffaf3;
+  --saffron: #e3a12f;
+  --green: #2a7449;
+  --green-wash: #e2f0e7;
+  --amber: #8c5a0c;
+  --amber-wash: #f7ebd0;
+  --grey-wash: #efe9de;
+
+  --font-display: 'Fraunces Variable', 'Iowan Old Style', Georgia, serif;
+  --font-ui: 'Hanken Grotesk Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.8125rem;
+  --text-md: 0.9375rem;
+  --text-lg: 1.0625rem;
+  --text-xl: 1.375rem;
+  --text-2xl: 1.875rem;
+  --text-3xl: clamp(2.125rem, 1.5rem + 2.4vw, 3rem);
+
+  --radius: 10px;
+  --radius-sm: 7px;
+  --shadow-sheet:
+    0 1px 1px rgb(28 26 23 / 0.05), 0 10px 24px -8px rgb(28 26 23 / 0.16), 0 30px 60px -30px rgb(28 26 23 / 0.28);
+  --shadow-pop: 0 2px 4px rgb(28 26 23 / 0.06), 0 14px 32px -10px rgb(28 26 23 / 0.24);
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --fast: 150ms;
+
+  color-scheme: light;
+}
+
+[data-theme='dark'] {
+  --paper: #151311;
+  --surface: #1e1b18;
+  --sunken: #100e0c;
+  --ink: #efe7da;
+  --ink-2: #d3cabb;
+  --muted: #a1988a;
+  --hair: #2f2a25;
+  --hair-strong: #443d35;
+  --red: #e0523c;
+  --red-deep: #c2412d;
+  --red-wash: #3a1c16;
+  --on-red: #1a0e0b;
+  --saffron: #ebb04b;
+  --green: #66c48c;
+  --green-wash: #16301f;
+  --amber: #e4ad52;
+  --amber-wash: #33270f;
+  --grey-wash: #2a2520;
+  --shadow-sheet: 0 1px 1px rgb(0 0 0 / 0.3), 0 16px 36px -10px rgb(0 0 0 / 0.6);
+  --shadow-pop: 0 2px 4px rgb(0 0 0 / 0.3), 0 14px 32px -10px rgb(0 0 0 / 0.7);
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: var(--text-md);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+p,
+dl,
+dd,
+ul,
+ol,
+figure {
+  margin: 0;
+}
+ul,
+ol {
+  padding: 0;
+  list-style: none;
+}
+
+h1,
+h2 {
+  font-family: var(--font-display);
+  font-weight: 560;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+h1 {
+  font-size: var(--text-3xl);
+}
+h2 {
+  font-size: var(--text-xl);
+}
+h3 {
+  font-size: var(--text-md);
+  font-weight: 650;
+}
+
+a {
+  color: inherit;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+button {
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 2px solid var(--saffron);
+  outline-offset: 2px;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.amount {
+  font-variant-numeric: tabular-nums lining-nums;
+  white-space: nowrap;
+}
+
+.icon {
+  flex: none;
+}
+
+/* The binding thread of the ledger, used as the one decorative divider. */
+.stitch {
+  height: 0;
+  margin: 0;
+  border: 0;
+  border-top: 2px dashed var(--saffron);
+  opacity: 0.85;
+}
+
+/* ---------------------------------------------------------------- buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 16px;
+  border: 1px solid var(--hair-strong);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--ink);
+  font-size: var(--text-sm);
+  font-weight: 620;
+  line-height: 1;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    background var(--fast) var(--ease),
+    border-color var(--fast) var(--ease),
+    transform var(--fast) var(--ease);
+}
+.btn:hover {
+  border-color: var(--ink);
+}
+.btn:active {
+  transform: translateY(1px);
+}
+.btn--primary {
+  border-color: var(--red);
+  background: var(--red);
+  color: var(--on-red);
+}
+.btn--primary:hover {
+  border-color: var(--red-deep);
+  background: var(--red-deep);
+}
+.btn--quiet {
+  border-color: transparent;
+  background: transparent;
+}
+.btn--quiet:hover {
+  border-color: transparent;
+  background: var(--grey-wash);
+}
+.btn--danger {
+  color: var(--red);
+}
+.btn--danger:hover {
+  border-color: var(--red);
+}
+.btn--lg {
+  min-height: 48px;
+  padding: 0 22px;
+  font-size: var(--text-md);
+}
+.btn[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.iconbtn {
+  display: inline-grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--muted);
+  transition:
+    background var(--fast) var(--ease),
+    color var(--fast) var(--ease);
+}
+.iconbtn:hover {
+  background: var(--grey-wash);
+  color: var(--ink);
+}
+.iconbtn[disabled] {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.link {
+  border: 0;
+  padding: 0;
+  background: none;
+  color: var(--red);
+  font-weight: 620;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--red) 40%, transparent);
+  text-underline-offset: 3px;
+}
+.link:hover {
+  text-decoration-color: currentColor;
+}
+
+/* ---------------------------------------------------------------- fields */
+.field {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+.field > label,
+.label {
+  color: var(--ink-2);
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+.field__note {
+  color: var(--muted);
+  font-size: var(--text-xs);
+  line-height: 1.4;
+}
+.field--error .field__note {
+  color: var(--red);
+  font-weight: 600;
+}
+
+.input,
+.field input:not([type='checkbox'], [type='radio'], [type='color'], [type='file']),
+.field select,
+.field textarea {
+  width: 100%;
+  min-height: 40px;
+  padding: 8px 12px;
+  border: 1px solid var(--hair-strong);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  transition:
+    border-color var(--fast) var(--ease),
+    box-shadow var(--fast) var(--ease);
+}
+.field textarea {
+  min-height: 76px;
+  resize: vertical;
+  line-height: 1.5;
+}
+.input:hover,
+.field input:hover,
+.field select:hover,
+.field textarea:hover {
+  border-color: var(--muted);
+}
+.input:focus-visible,
+.field input:focus-visible,
+.field select:focus-visible,
+.field textarea:focus-visible {
+  outline: none;
+  border-color: var(--ink);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--saffron) 55%, transparent);
+}
+.field--error input,
+.field--error select {
+  border-color: var(--red);
+}
+input::placeholder,
+textarea::placeholder {
+  color: color-mix(in srgb, var(--muted) 70%, transparent);
+}
+input[type='number'] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+input[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+
+.check {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: var(--text-sm);
+  cursor: pointer;
+}
+.check input {
+  width: 18px;
+  height: 18px;
+  margin: 2px 0 0;
+  accent-color: var(--red);
+  flex: none;
+}
+.check small {
+  display: block;
+  color: var(--muted);
+  font-size: var(--text-xs);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.chip {
+  min-height: 32px;
+  padding: 0 12px;
+  border: 1px solid var(--hair-strong);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink-2);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  transition:
+    background var(--fast) var(--ease),
+    border-color var(--fast) var(--ease);
+}
+.chip:hover {
+  border-color: var(--ink);
+}
+.chip[aria-pressed='true'],
+.chip[aria-selected='true'] {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+}
+.chip span {
+  margin-left: 6px;
+  opacity: 0.65;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------------------------------------------------------------- status badges */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--grey-wash);
+  color: var(--ink-2);
+  font-size: var(--text-xs);
+  font-weight: 650;
+  white-space: nowrap;
+}
+.badge::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.badge--paid {
+  background: var(--green-wash);
+  color: var(--green);
+}
+.badge--overdue {
+  background: var(--red-wash);
+  color: var(--red);
+}
+.badge--sent,
+.badge--partially-paid {
+  background: var(--amber-wash);
+  color: var(--amber);
+}
+.badge--void {
+  text-decoration: line-through;
+}
+
+/* ---------------------------------------------------------------- dialog and toasts */
+.dialog {
+  width: min(520px, calc(100vw - 32px));
+  max-height: calc(100dvh - 48px);
+  padding: 0;
+  border: 1px solid var(--hair);
+  border-radius: 14px;
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: var(--shadow-pop);
+}
+.dialog--wide {
+  width: min(680px, calc(100vw - 32px));
+}
+.dialog::backdrop {
+  background: rgb(20 17 14 / 0.45);
+}
+.dialog[open] {
+  animation: rise 180ms var(--ease);
+}
+.dialog__body {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  max-height: calc(100dvh - 48px);
+}
+.dialog__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 16px 14px 24px;
+  border-bottom: 1px solid var(--hair);
+}
+.dialog__content {
+  display: grid;
+  gap: 16px;
+  padding: 20px 24px;
+  overflow-y: auto;
+}
+.dialog__foot {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 14px 24px 18px;
+  border-top: 1px solid var(--hair);
+}
+
+.toasts {
+  position: fixed;
+  z-index: 60;
+  left: 50%;
+  bottom: 24px;
+  display: grid;
+  gap: 8px;
+  width: min(440px, calc(100vw - 32px));
+  transform: translateX(-50%);
+}
+.toast {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 14px 12px 18px;
+  border-radius: 12px;
+  background: var(--ink);
+  color: var(--paper);
+  font-size: var(--text-sm);
+  box-shadow: var(--shadow-pop);
+  animation: rise 200ms var(--ease);
+}
+.toast button {
+  min-height: 32px;
+  padding: 0 12px;
+  border: 1px solid color-mix(in srgb, var(--paper) 35%, transparent);
+  border-radius: 999px;
+  background: none;
+  color: inherit;
+  font-weight: 650;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+.toasts .toast {
+  animation-name: toast-rise;
+}
+@keyframes toast-rise {
+  from {
+    opacity: 0;
+    translate: 0 8px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
